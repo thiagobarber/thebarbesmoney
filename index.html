@@ -174,37 +174,83 @@
         }));
     }
 
-    // INICIALIZAR SDK
-    async function init() {
-      const result = await window.dataSdk.init(handler);
-      if (!result.isOk) {
-        showMessage('Erro ao inicializar sistema', 'error');
-        return;
+    // DETECTAR SE ESTÁ NO AMBIENTE CANVA OU EXTERNO
+    const isCanvaEnvironment = typeof window.dataSdk !== 'undefined';
+    
+    // STORAGE LOCAL (para quando não estiver no Canva)
+    const LocalStorage = {
+      save(key, data) {
+        localStorage.setItem(key, JSON.stringify(data));
+      },
+      load(key) {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : [];
       }
-      
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Criar serviços padrão se não existirem
-      if (state.services.length === 0) {
-        const defaultServices = [
-          { name: 'Corte', price: 35.00 },
-          { name: 'Barba', price: 25.00 },
-          { name: 'Sobrancelha', price: 15.00 },
-          { name: 'Corte + Barba', price: 55.00 },
-          { name: 'Pigmentação', price: 45.00 }
-        ];
+    };
+    
+    // INICIALIZAR SDK OU LOCALSTORAGE
+    async function init() {
+      if (isCanvaEnvironment) {
+        // Ambiente Canva - usar Data SDK
+        const result = await window.dataSdk.init(handler);
+        if (!result.isOk) {
+          showMessage('Erro ao inicializar sistema', 'error');
+          return;
+        }
         
-        for (const svc of defaultServices) {
-          if (state.allData.length < 999) {
-            await window.dataSdk.create({
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Criar serviços padrão se não existirem
+        if (state.services.length === 0) {
+          const defaultServices = [
+            { name: 'Corte', price: 35.00 },
+            { name: 'Barba', price: 25.00 },
+            { name: 'Sobrancelha', price: 15.00 },
+            { name: 'Corte + Barba', price: 55.00 },
+            { name: 'Pigmentação', price: 45.00 }
+          ];
+          
+          for (const svc of defaultServices) {
+            if (state.allData.length < 999) {
+              await window.dataSdk.create({
+                type: 'service',
+                serviceId: 'svc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                serviceName: svc.name,
+                servicePrice: svc.price
+              });
+              await new Promise(resolve => setTimeout(resolve, 50));
+            }
+          }
+        }
+      } else {
+        // Ambiente externo - usar localStorage
+        const savedData = LocalStorage.load('barbersData');
+        
+        // Criar serviços padrão se não existirem
+        if (savedData.length === 0) {
+          const defaultServices = [
+            { name: 'Corte', price: 35.00 },
+            { name: 'Barba', price: 25.00 },
+            { name: 'Sobrancelha', price: 15.00 },
+            { name: 'Corte + Barba', price: 55.00 },
+            { name: 'Pigmentação', price: 45.00 }
+          ];
+          
+          for (const svc of defaultServices) {
+            savedData.push({
+              __backendId: 'svc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
               type: 'service',
               serviceId: 'svc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
               serviceName: svc.name,
               servicePrice: svc.price
             });
-            await new Promise(resolve => setTimeout(resolve, 50));
+            await new Promise(resolve => setTimeout(resolve, 10));
           }
+          LocalStorage.save('barbersData', savedData);
         }
+        
+        processRecords(savedData);
+        renderApp();
       }
     }
 
@@ -275,33 +321,57 @@
     }
 
     async function handleRegister(email, password) {
-      if (state.allData.length >= 999) {
-        showMessage('Limite de registros atingido!', 'error');
-        return false;
-      }
+      if (isCanvaEnvironment) {
+        if (state.allData.length >= 999) {
+          showMessage('Limite de registros atingido!', 'error');
+          return false;
+        }
 
-      const existingUser = state.users.find(u => u.email === email);
-      if (existingUser) {
-        showMessage('Email já cadastrado!', 'error');
-        return false;
-      }
+        const existingUser = state.users.find(u => u.email === email);
+        if (existingUser) {
+          showMessage('Email já cadastrado!', 'error');
+          return false;
+        }
 
-      showLoader(true);
-      const result = await window.dataSdk.create({
-        type: 'user',
-        userId: 'user_' + Date.now(),
-        userEmail: email,
-        userPassword: password,
-        userCreatedAt: new Date().toISOString()
-      });
-      showLoader(false);
+        showLoader(true);
+        const result = await window.dataSdk.create({
+          type: 'user',
+          userId: 'user_' + Date.now(),
+          userEmail: email,
+          userPassword: password,
+          userCreatedAt: new Date().toISOString()
+        });
+        showLoader(false);
 
-      if (result.isOk) {
+        if (result.isOk) {
+          showMessage('Conta criada com sucesso!');
+          return true;
+        } else {
+          showMessage('Erro ao criar conta', 'error');
+          return false;
+        }
+      } else {
+        let data = LocalStorage.load('barbersData');
+        
+        const existingUser = data.find(u => u.type === 'user' && u.userEmail === email);
+        if (existingUser) {
+          showMessage('Email já cadastrado!', 'error');
+          return false;
+        }
+        
+        data.push({
+          __backendId: 'user_' + Date.now(),
+          type: 'user',
+          userId: 'user_' + Date.now(),
+          userEmail: email,
+          userPassword: password,
+          userCreatedAt: new Date().toISOString()
+        });
+        
+        LocalStorage.save('barbersData', data);
+        processRecords(data);
         showMessage('Conta criada com sucesso!');
         return true;
-      } else {
-        showMessage('Erro ao criar conta', 'error');
-        return false;
       }
     }
 
@@ -365,207 +435,362 @@
 
     // AÇÕES DE DADOS
     async function saveConfig(name, cnpj) {
-      const configRec = state.allData.find(r => r.type === 'config');
-      showLoader(true);
-      
-      let result;
-      if (configRec) {
-        result = await window.dataSdk.update({
-          ...configRec,
-          businessName: name,
-          cnpj: cnpj
-        });
-      } else {
-        if (state.allData.length >= 999) {
-          showLoader(false);
-          showMessage('Limite de registros atingido!', 'error');
-          return;
+      if (isCanvaEnvironment) {
+        const configRec = state.allData.find(r => r.type === 'config');
+        showLoader(true);
+        
+        let result;
+        if (configRec) {
+          result = await window.dataSdk.update({
+            ...configRec,
+            businessName: name,
+            cnpj: cnpj
+          });
+        } else {
+          if (state.allData.length >= 999) {
+            showLoader(false);
+            showMessage('Limite de registros atingido!', 'error');
+            return;
+          }
+          result = await window.dataSdk.create({
+            type: 'config',
+            businessName: name,
+            cnpj: cnpj
+          });
         }
-        result = await window.dataSdk.create({
-          type: 'config',
-          businessName: name,
-          cnpj: cnpj
-        });
-      }
-      
-      showLoader(false);
-      if (result.isOk) {
-        showMessage('Configurações salvas!');
+        
+        showLoader(false);
+        if (result.isOk) {
+          showMessage('Configurações salvas!');
+        } else {
+          showMessage('Erro ao salvar', 'error');
+        }
       } else {
-        showMessage('Erro ao salvar', 'error');
+        // LocalStorage
+        let data = LocalStorage.load('barbersData');
+        const configRec = data.find(r => r.type === 'config');
+        
+        if (configRec) {
+          configRec.businessName = name;
+          configRec.cnpj = cnpj;
+        } else {
+          data.push({
+            __backendId: 'config_' + Date.now(),
+            type: 'config',
+            businessName: name,
+            cnpj: cnpj
+          });
+        }
+        
+        LocalStorage.save('barbersData', data);
+        processRecords(data);
+        renderApp();
+        showMessage('Configurações salvas!');
       }
     }
 
     async function addProfessional(name, commission) {
-      if (state.allData.length >= 999) {
-        showMessage('Limite de 999 registros atingido!', 'error');
-        return;
-      }
-      
-      showLoader(true);
-      const result = await window.dataSdk.create({
-        type: 'professional',
-        professionalId: 'prof_' + Date.now(),
-        professionalName: name,
-        professionalCommission: parseFloat(commission)
-      });
-      showLoader(false);
-      
-      if (result.isOk) {
-        showMessage('Profissional cadastrado!');
+      if (isCanvaEnvironment) {
+        if (state.allData.length >= 999) {
+          showMessage('Limite de 999 registros atingido!', 'error');
+          return;
+        }
+        
+        showLoader(true);
+        const result = await window.dataSdk.create({
+          type: 'professional',
+          professionalId: 'prof_' + Date.now(),
+          professionalName: name,
+          professionalCommission: parseFloat(commission)
+        });
+        showLoader(false);
+        
+        if (result.isOk) {
+          showMessage('Profissional cadastrado!');
+        } else {
+          showMessage('Erro ao cadastrar', 'error');
+        }
       } else {
-        showMessage('Erro ao cadastrar', 'error');
+        let data = LocalStorage.load('barbersData');
+        data.push({
+          __backendId: 'prof_' + Date.now(),
+          type: 'professional',
+          professionalId: 'prof_' + Date.now(),
+          professionalName: name,
+          professionalCommission: parseFloat(commission)
+        });
+        LocalStorage.save('barbersData', data);
+        processRecords(data);
+        renderApp();
+        showMessage('Profissional cadastrado!');
       }
     }
 
     async function deleteProfessional(record) {
-      showLoader(true);
-      const result = await window.dataSdk.delete(record);
-      showLoader(false);
-      
-      if (result.isOk) {
-        showMessage('Profissional removido!');
+      if (isCanvaEnvironment) {
+        showLoader(true);
+        const result = await window.dataSdk.delete(record);
+        showLoader(false);
+        
+        if (result.isOk) {
+          showMessage('Profissional removido!');
+        } else {
+          showMessage('Erro ao remover', 'error');
+        }
       } else {
-        showMessage('Erro ao remover', 'error');
+        let data = LocalStorage.load('barbersData');
+        data = data.filter(r => r.__backendId !== record.__backendId);
+        LocalStorage.save('barbersData', data);
+        processRecords(data);
+        renderApp();
+        showMessage('Profissional removido!');
       }
     }
 
     async function updateProfessional(record, name, commission) {
-      showLoader(true);
-      const result = await window.dataSdk.update({
-        ...record,
-        professionalName: name,
-        professionalCommission: parseFloat(commission)
-      });
-      showLoader(false);
-      
-      if (result.isOk) {
-        showMessage('Profissional atualizado!');
+      if (isCanvaEnvironment) {
+        showLoader(true);
+        const result = await window.dataSdk.update({
+          ...record,
+          professionalName: name,
+          professionalCommission: parseFloat(commission)
+        });
+        showLoader(false);
+        
+        if (result.isOk) {
+          showMessage('Profissional atualizado!');
+        } else {
+          showMessage('Erro ao atualizar', 'error');
+        }
       } else {
-        showMessage('Erro ao atualizar', 'error');
+        let data = LocalStorage.load('barbersData');
+        const rec = data.find(r => r.__backendId === record.__backendId);
+        if (rec) {
+          rec.professionalName = name;
+          rec.professionalCommission = parseFloat(commission);
+        }
+        LocalStorage.save('barbersData', data);
+        processRecords(data);
+        renderApp();
+        showMessage('Profissional atualizado!');
       }
     }
 
     async function addService(name, price) {
-      if (state.allData.length >= 999) {
-        showMessage('Limite de 999 registros atingido!', 'error');
-        return;
-      }
-      
-      showLoader(true);
-      const result = await window.dataSdk.create({
-        type: 'service',
-        serviceId: 'svc_' + Date.now(),
-        serviceName: name,
-        servicePrice: parseFloat(price)
-      });
-      showLoader(false);
-      
-      if (result.isOk) {
-        showMessage('Serviço cadastrado!');
+      if (isCanvaEnvironment) {
+        if (state.allData.length >= 999) {
+          showMessage('Limite de 999 registros atingido!', 'error');
+          return;
+        }
+        
+        showLoader(true);
+        const result = await window.dataSdk.create({
+          type: 'service',
+          serviceId: 'svc_' + Date.now(),
+          serviceName: name,
+          servicePrice: parseFloat(price)
+        });
+        showLoader(false);
+        
+        if (result.isOk) {
+          showMessage('Serviço cadastrado!');
+        } else {
+          showMessage('Erro ao cadastrar', 'error');
+        }
       } else {
-        showMessage('Erro ao cadastrar', 'error');
+        let data = LocalStorage.load('barbersData');
+        data.push({
+          __backendId: 'svc_' + Date.now(),
+          type: 'service',
+          serviceId: 'svc_' + Date.now(),
+          serviceName: name,
+          servicePrice: parseFloat(price)
+        });
+        LocalStorage.save('barbersData', data);
+        processRecords(data);
+        renderApp();
+        showMessage('Serviço cadastrado!');
       }
     }
 
     async function deleteService(record) {
-      showLoader(true);
-      const result = await window.dataSdk.delete(record);
-      showLoader(false);
-      
-      if (result.isOk) {
-        showMessage('Serviço removido!');
+      if (isCanvaEnvironment) {
+        showLoader(true);
+        const result = await window.dataSdk.delete(record);
+        showLoader(false);
+        
+        if (result.isOk) {
+          showMessage('Serviço removido!');
+        } else {
+          showMessage('Erro ao remover', 'error');
+        }
       } else {
-        showMessage('Erro ao remover', 'error');
+        let data = LocalStorage.load('barbersData');
+        data = data.filter(r => r.__backendId !== record.__backendId);
+        LocalStorage.save('barbersData', data);
+        processRecords(data);
+        renderApp();
+        showMessage('Serviço removido!');
       }
     }
 
     async function updateService(record, name, price) {
-      showLoader(true);
-      const result = await window.dataSdk.update({
-        ...record,
-        serviceName: name,
-        servicePrice: parseFloat(price)
-      });
-      showLoader(false);
-      
-      if (result.isOk) {
-        showMessage('Serviço atualizado!');
+      if (isCanvaEnvironment) {
+        showLoader(true);
+        const result = await window.dataSdk.update({
+          ...record,
+          serviceName: name,
+          servicePrice: parseFloat(price)
+        });
+        showLoader(false);
+        
+        if (result.isOk) {
+          showMessage('Serviço atualizado!');
+        } else {
+          showMessage('Erro ao atualizar', 'error');
+        }
       } else {
-        showMessage('Erro ao atualizar', 'error');
+        let data = LocalStorage.load('barbersData');
+        const rec = data.find(r => r.__backendId === record.__backendId);
+        if (rec) {
+          rec.serviceName = name;
+          rec.servicePrice = parseFloat(price);
+        }
+        LocalStorage.save('barbersData', data);
+        processRecords(data);
+        renderApp();
+        showMessage('Serviço atualizado!');
       }
     }
 
     async function addAppointment(profId, profName, svcId, svcName, value, status) {
-      if (state.allData.length >= 999) {
-        showMessage('Limite de 999 registros atingido!', 'error');
-        return false;
+      if (isCanvaEnvironment) {
+        if (state.allData.length >= 999) {
+          showMessage('Limite de 999 registros atingido!', 'error');
+          return false;
+        }
+        
+        const now = new Date();
+        const date = now.toISOString().split('T')[0];
+        const time = now.toTimeString().slice(0, 5);
+        
+        const result = await window.dataSdk.create({
+          type: 'appointment',
+          appointmentId: 'apt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          appointmentDate: date,
+          appointmentTime: time,
+          appointmentProfessionalId: profId,
+          appointmentProfessionalName: profName,
+          appointmentServiceId: svcId,
+          appointmentServiceName: svcName,
+          appointmentValue: parseFloat(value),
+          appointmentStatus: status
+        });
+        
+        return result.isOk;
+      } else {
+        const now = new Date();
+        const date = now.toISOString().split('T')[0];
+        const time = now.toTimeString().slice(0, 5);
+        
+        let data = LocalStorage.load('barbersData');
+        data.push({
+          __backendId: 'apt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          type: 'appointment',
+          appointmentId: 'apt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          appointmentDate: date,
+          appointmentTime: time,
+          appointmentProfessionalId: profId,
+          appointmentProfessionalName: profName,
+          appointmentServiceId: svcId,
+          appointmentServiceName: svcName,
+          appointmentValue: parseFloat(value),
+          appointmentStatus: status
+        });
+        LocalStorage.save('barbersData', data);
+        processRecords(data);
+        return true;
       }
-      
-      const now = new Date();
-      const date = now.toISOString().split('T')[0];
-      const time = now.toTimeString().slice(0, 5);
-      
-      const result = await window.dataSdk.create({
-        type: 'appointment',
-        appointmentId: 'apt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-        appointmentDate: date,
-        appointmentTime: time,
-        appointmentProfessionalId: profId,
-        appointmentProfessionalName: profName,
-        appointmentServiceId: svcId,
-        appointmentServiceName: svcName,
-        appointmentValue: parseFloat(value),
-        appointmentStatus: status
-      });
-      
-      return result.isOk;
     }
 
     async function deleteAppointment(record) {
-      showLoader(true);
-      const result = await window.dataSdk.delete(record);
-      showLoader(false);
-      
-      if (result.isOk) {
-        showMessage('Atendimento removido!');
+      if (isCanvaEnvironment) {
+        showLoader(true);
+        const result = await window.dataSdk.delete(record);
+        showLoader(false);
+        
+        if (result.isOk) {
+          showMessage('Atendimento removido!');
+        } else {
+          showMessage('Erro ao remover', 'error');
+        }
       } else {
-        showMessage('Erro ao remover', 'error');
+        let data = LocalStorage.load('barbersData');
+        data = data.filter(r => r.__backendId !== record.__backendId);
+        LocalStorage.save('barbersData', data);
+        processRecords(data);
+        renderApp();
+        showMessage('Atendimento removido!');
       }
     }
 
     async function addCost(category, month, value) {
-      if (state.allData.length >= 999) {
-        showMessage('Limite de 999 registros atingido!', 'error');
-        return;
-      }
-      
-      showLoader(true);
-      const result = await window.dataSdk.create({
-        type: 'cost',
-        costId: 'cost_' + Date.now(),
-        costCategory: category,
-        costMonth: month,
-        costValue: parseFloat(value)
-      });
-      showLoader(false);
-      
-      if (result.isOk) {
-        showMessage('Custo registrado!');
+      if (isCanvaEnvironment) {
+        if (state.allData.length >= 999) {
+          showMessage('Limite de 999 registros atingido!', 'error');
+          return;
+        }
+        
+        showLoader(true);
+        const result = await window.dataSdk.create({
+          type: 'cost',
+          costId: 'cost_' + Date.now(),
+          costCategory: category,
+          costMonth: month,
+          costValue: parseFloat(value)
+        });
+        showLoader(false);
+        
+        if (result.isOk) {
+          showMessage('Custo registrado!');
+        } else {
+          showMessage('Erro ao registrar', 'error');
+        }
       } else {
-        showMessage('Erro ao registrar', 'error');
+        let data = LocalStorage.load('barbersData');
+        data.push({
+          __backendId: 'cost_' + Date.now(),
+          type: 'cost',
+          costId: 'cost_' + Date.now(),
+          costCategory: category,
+          costMonth: month,
+          costValue: parseFloat(value)
+        });
+        LocalStorage.save('barbersData', data);
+        processRecords(data);
+        renderApp();
+        showMessage('Custo registrado!');
       }
     }
 
     async function deleteCost(record) {
-      showLoader(true);
-      const result = await window.dataSdk.delete(record);
-      showLoader(false);
-      
-      if (result.isOk) {
-        showMessage('Custo removido!');
+      if (isCanvaEnvironment) {
+        showLoader(true);
+        const result = await window.dataSdk.delete(record);
+        showLoader(false);
+        
+        if (result.isOk) {
+          showMessage('Custo removido!');
+        } else {
+          showMessage('Erro ao remover', 'error');
+        }
       } else {
-        showMessage('Erro ao remover', 'error');
+        let data = LocalStorage.load('barbersData');
+        data = data.filter(r => r.__backendId !== record.__backendId);
+        LocalStorage.save('barbersData', data);
+        processRecords(data);
+        renderApp();
+        showMessage('Custo removido!');
       }
     }
 
@@ -891,7 +1116,7 @@
 
     function renderNav() {
       const views = [
-        { id: 'caixa', label: '💰 Caixa' },
+        { id: 'caixa', label: '���� Caixa' },
         { id: 'historico', label: '📋 Histórico' },
         { id: 'relatorios', label: '📊 Relatórios' },
         { id: 'extrato', label: '💵 Extrato' },
@@ -1454,5 +1679,5 @@
     init();
     renderApp();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9baddd85f6c2a42d',t:'MTc2Nzg5ODA2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9bade9df64318dd8',t:'MTc2Nzg5ODU3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
