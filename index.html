@@ -1,381 +1,888 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thebarbersmoney | Lucro e Gestão para Barbearias</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        /* Reset e Variáveis */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Open Sans', sans-serif;
-        }
-        :root {
-            --bg-principal: #121212;
-            --bg-secundario: #1a1a1a;
-            --bg-card: #242424;
-            --dourado: #d4af37;
-            --dourado-hover: #b8972f;
-            --texto-claro: #ffffff;
-            --texto-escuro: #aaaaaa;
-        }
-        body {
-            background-color: var(--bg-principal);
-            color: var(--texto-claro);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-        h1, h2, h3, .btn {
-            font-family: 'Montserrat', sans-serif;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
-            position: relative;
-            z-index: 2;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f1117">
+  <meta name="description" content="Gestão financeira e fluxo de caixa para barbearias. Controle atendimentos, comissões, custos e lucro líquido com o The Barbers Money. Teste grátis por 30 dias, sem cartão.">
+  <title>The Barbers Money — Seu caixa sob controle</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0f1117;
+      --bg-soft: #14161d;
+      --panel: #181a21;
+      --panel-2: #1d2028;
+      --line: rgba(255,255,255,.09);
+      --line-gold: rgba(212,175,55,.32);
+      --gold: #d4af37;
+      --gold-light: #e5c07b;
+      --gold-deep: #9e7720;
+      --text: #f6f4ee;
+      --muted: #a6a7ad;
+      --muted-2: #747781;
+      --green: #9bd6ac;
+      --red: #e58e88;
+      --radius: 22px;
+      --shadow: 0 22px 70px rgba(0,0,0,.42);
+      --max: 1160px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse at 83% 5%, rgba(212,175,55,.075), transparent 32%),
+        radial-gradient(ellipse at 7% 45%, rgba(82,93,126,.08), transparent 35%);
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    ::selection { background: rgba(212,175,55,.35); color: #fff; }
+    .skip-link {
+      position: absolute; z-index: 100; left: 14px; top: -60px;
+      padding: 10px 14px; border-radius: 10px; background: var(--gold); color: #17130a; font-weight: 800;
+    }
+    .skip-link:focus { top: 12px; }
+    .wrap { width: min(var(--max), calc(100% - 48px)); margin-inline: auto; }
+    .section { padding: 104px 0; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px;
+      color: var(--gold-light); font-size: .75rem; letter-spacing: .16em;
+      text-transform: uppercase; font-weight: 800;
+    }
+    .eyebrow::before { content: ""; width: 22px; height: 1px; background: var(--gold); }
+    .section-heading { max-width: 690px; margin-bottom: 38px; }
+    .section-heading h2 {
+      margin: 13px 0 12px; font-size: clamp(2rem, 4vw, 3.25rem);
+      line-height: 1.08; letter-spacing: -.045em;
+    }
+    .section-heading p { margin: 0; max-width: 610px; color: var(--muted); font-size: 1.05rem; }
+    .gold-text { color: var(--gold-light); }
+    .icon { width: 22px; height: 22px; display: inline-block; flex: 0 0 auto; }
 
-        /* Header / Hero Section com a Nova Imagem de Fundo */
-        header {
-            padding: 120px 0 100px 0;
-            text-align: center;
-            background-image: linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.95)), url('https://imgur.com/93QMngq.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;
-        }
-        .logo {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--texto-claro);
-            letter-spacing: 2px;
-            margin-bottom: 25px;
-        }
-        .logo span {
-            color: var(--dourado);
-        }
-        .hero-headline {
-            font-size: 2.8rem;
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            color: var(--texto-claro);
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        }
-        .hero-subheadline {
-            font-size: 1.2rem;
-            color: #dddddd;
-            max-width: 700px;
-            margin: 0 auto 40px auto;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-        }
-        .btn {
-            display: inline-block;
-            background-color: var(--dourado);
-            color: #000;
-            padding: 18px 40px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            text-decoration: none;
-            border-radius: 5px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-            cursor: pointer;
-        }
-        .btn:hover {
-            background-color: var(--dourado-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
-        }
-        .cta-subtext {
-            font-size: 0.85rem;
-            color: var(--texto-escuro);
-            margin-top: 15px;
-            display: block;
-        }
+    /* Header */
+    .site-header {
+      position: fixed; z-index: 50; inset: 0 0 auto;
+      background: rgba(15,17,23,.82); border-bottom: 1px solid rgba(255,255,255,.055);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    }
+    .nav-shell { height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; flex-shrink: 0; }
+    .brand-mark {
+      display: grid; place-items: center; flex: 0 0 auto; width: 64px; height: 40px; padding: 2px;
+      overflow: hidden; border: 1px solid rgba(212,175,55,.42); border-radius: 10px;
+      background: #030302; box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 5px 22px rgba(212,175,55,.08);
+    }
+    .brand-mark img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .brand-words { display: flex; flex-direction: column; line-height: 1.02; }
+    .brand-words strong { font-size: .91rem; letter-spacing: .015em; font-weight: 850; white-space: nowrap; }
+    .brand-words span { margin-top: 4px; color: var(--gold-light); font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; font-weight: 750; }
+    .nav-links { display: flex; align-items: center; gap: clamp(18px, 2.5vw, 34px); margin-left: auto; }
+    .nav-links a { color: #c0c1c5; font-size: .86rem; transition: color .2s ease; }
+    .nav-links a:hover, .nav-links a:focus-visible { color: var(--gold-light); }
+    .nav-cta { min-height: 43px !important; padding: 0 17px !important; font-size: .83rem !important; }
+    .menu-toggle { display: none; width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--text); cursor: pointer; }
+    .menu-toggle svg { width: 21px; height: 21px; }
 
-        /* Seção de Benefícios */
-        .features {
-            padding: 80px 0;
-            background-color: var(--bg-secundario);
-        }
-        .section-title {
-            text-align: center;
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 50px;
-        }
-        .section-title span {
-            color: var(--dourado);
-        }
-        .grid-features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        .card-feature {
-            background-color: var(--bg-card);
-            padding: 35px;
-            border-radius: 8px;
-            border-top: 4px solid var(--dourado);
-            transition: transform 0.3s ease;
-        }
-        .card-feature:hover {
-            transform: translateY(-5px);
-        }
-        .card-feature h3 {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: var(--texto-claro);
-        }
-        .card-feature p {
-            color: var(--texto-escuro);
-            font-size: 0.95rem;
-        }
+    /* Buttons */
+    .btn {
+      display: inline-flex; justify-content: center; align-items: center; gap: 10px;
+      min-height: 56px; padding: 0 24px; border: 1px solid transparent; border-radius: 14px;
+      font-size: .93rem; line-height: 1.2; font-weight: 850; letter-spacing: .015em;
+      cursor: pointer; transition: transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:focus-visible, .menu-toggle:focus-visible, .modal-close:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .btn-gold {
+      color: #1b160b; background: linear-gradient(135deg, #f1d795 0%, #d4af37 48%, #b58b26 100%);
+      box-shadow: 0 9px 30px rgba(212,175,55,.19), inset 0 1px 0 rgba(255,255,255,.44);
+    }
+    .btn-gold:hover { box-shadow: 0 13px 38px rgba(212,175,55,.3), inset 0 1px 0 rgba(255,255,255,.5); }
+    .btn-outline { color: var(--text); border-color: rgba(255,255,255,.14); background: rgba(255,255,255,.035); }
+    .btn-outline:hover { border-color: rgba(212,175,55,.5); background: rgba(212,175,55,.07); }
+    .btn .icon { width: 19px; height: 19px; }
 
-        /* Seção Sobre o Produto */
-        .about-product {
-            padding: 80px 0;
-        }
-        .about-content {
-            display: flex;
-            align-items: center;
-            gap: 50px;
-            flex-wrap: wrap;
-        }
-        .about-text {
-            flex: 1;
-            min-width: 300px;
-        }
-        .about-text h2 {
-            font-size: 2.2rem;
-            margin-bottom: 20px;
-        }
-        .about-text p {
-            color: var(--texto-escuro);
-            margin-bottom: 20px;
-        }
-        .about-list {
-            list-style: none;
-        }
-        .about-list li {
-            margin-bottom: 12px;
-            position: relative;
-            padding-left: 25px;
-            color: var(--texto-claro);
-        }
-        .about-list li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: var(--dourado);
-            font-weight: bold;
-        }
+    /* Hero */
+    .hero {
+      position: relative; overflow: hidden; min-height: 775px; padding: 142px 0 78px;
+      background:
+        radial-gradient(ellipse at 76% 48%, rgba(181,139,38,.10), transparent 37%),
+        linear-gradient(180deg, rgba(255,255,255,.013), transparent 80%);
+    }
+    .hero::after {
+      content: ""; position: absolute; width: 640px; height: 640px; right: -160px; top: 145px; border-radius: 50%;
+      border: 1px solid rgba(212,175,55,.08); box-shadow: 0 0 0 46px rgba(212,175,55,.018), 0 0 0 100px rgba(212,175,55,.012); pointer-events: none;
+    }
+    .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.02fr .98fr; align-items: center; gap: 58px; }
+    .hero-copy { max-width: 650px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 9px; max-width: 100%;
+      padding: 9px 13px; border: 1px solid rgba(212,175,55,.3); border-radius: 999px;
+      color: #f0d99e; background: rgba(212,175,55,.075); font-size: .75rem; font-weight: 760; letter-spacing: .025em;
+    }
+    .hero-badge .star { color: var(--gold); font-size: 1rem; }
+    .hero h1 {
+      margin: 25px 0 20px; max-width: 690px; font-size: clamp(2.9rem, 5.2vw, 4.9rem);
+      line-height: .99; letter-spacing: -.065em; font-weight: 850;
+    }
+    .hero h1 em { color: var(--gold-light); font-style: normal; }
+    .hero-lede { max-width: 610px; margin: 0; color: #b5b6bc; font-size: clamp(1rem, 1.25vw, 1.12rem); line-height: 1.7; }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 13px; margin-top: 29px; }
+    .hero-actions .btn { min-height: 59px; }
+    .hero-note { display: flex; flex-wrap: wrap; gap: 9px 17px; margin-top: 17px; color: #a6a7ad; font-size: .76rem; }
+    .hero-note span { display: inline-flex; align-items: center; gap: 6px; }
+    .hero-note .check { color: var(--green); font-weight: 900; }
+    .hero-note .legal { color: #858891; }
+    .hero-micro { display: flex; align-items: center; gap: 12px; margin-top: 28px; color: #93959d; font-size: .82rem; }
+    .avatar-stack { display: flex; padding-left: 5px; }
+    .avatar-stack span { display: grid; place-items: center; width: 29px; height: 29px; margin-left: -5px; border: 2px solid var(--bg); border-radius: 50%; background: #2e3139; color: var(--gold-light); font-size: .64rem; font-weight: 800; }
+    .avatar-stack span:nth-child(2) { background: #45372a; color: #f0d6a0; }
+    .avatar-stack span:nth-child(3) { background: #39413e; color: #bbd5bf; }
+    .hero-visual { position: relative; min-height: 570px; display: grid; place-items: center; perspective: 1000px; }
+    .visual-glow { position: absolute; width: 400px; height: 400px; background: rgba(212,175,55,.14); filter: blur(100px); border-radius: 50%; }
+    .phone {
+      position: relative; z-index: 2; width: min(330px, 78%); padding: 9px; border-radius: 38px;
+      background: linear-gradient(145deg, #51535a, #17191f 17%, #262931 78%, #575052);
+      border: 1px solid rgba(237,220,176,.32); box-shadow: 0 37px 90px rgba(0,0,0,.65), 0 0 65px rgba(212,175,55,.12), inset 0 1px 1px rgba(255,255,255,.35);
+      transform: rotateY(-5deg) rotateX(2deg);
+    }
+    .phone-screen { min-height: 545px; overflow: hidden; padding: 14px 16px 17px; border-radius: 30px; background: #111319; border: 1px solid rgba(255,255,255,.06); }
+    .phone-status { display: flex; justify-content: space-between; align-items: center; padding: 1px 4px 12px; color: #d7d8da; font-size: .65rem; font-weight: 800; }
+    .status-icons { display: flex; align-items: center; gap: 4px; }
+    .status-icons i { display: block; width: 4px; height: 7px; border-radius: 2px; background: #d8d9db; }
+    .status-icons i:nth-child(2) { height: 9px; }
+    .status-icons i:nth-child(3) { height: 11px; }
+    .battery { width: 15px; height: 8px; margin-left: 3px; border: 1px solid #d8d9db; border-radius: 2px; position: relative; }
+    .battery::before { content: ""; position: absolute; inset: 1px 3px 1px 1px; background: #d8d9db; border-radius: 1px; }
+    .battery::after { content: ""; position: absolute; right: -3px; top: 2px; width: 2px; height: 3px; background: #d8d9db; border-radius: 0 2px 2px 0; }
+    .app-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+    .app-brand { display: flex; align-items: center; gap: 8px; }
+    .app-logo { display: grid; place-items: center; width: 31px; height: 31px; border-radius: 9px; color: #f0d184; background: rgba(212,175,55,.15); }
+    .app-logo svg { width: 18px; height: 18px; }
+    .app-brand strong { display: block; color: #f5f2e9; font-size: .71rem; line-height: 1.1; }
+    .app-brand small { display: block; margin-top: 3px; color: #878a94; font-size: .55rem; }
+    .app-bell { width: 29px; height: 29px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.08); border-radius: 9px; color: #b5b7bf; }
+    .app-bell svg { width: 15px; height: 15px; }
+    .app-title { display: flex; justify-content: space-between; align-items: end; margin-bottom: 12px; }
+    .app-title h3 { margin: 0; font-size: 1rem; letter-spacing: -.025em; }
+    .app-title span { color: #898c95; font-size: .56rem; }
+    .balance-card { position: relative; overflow: hidden; padding: 16px; border: 1px solid rgba(212,175,55,.22); border-radius: 16px; background: linear-gradient(130deg, rgba(212,175,55,.18), rgba(35,34,31,.8) 65%), #1b1c20; }
+    .balance-card::after { content: ""; position: absolute; right: -24px; top: -42px; width: 125px; height: 125px; border: 1px solid rgba(229,192,123,.13); border-radius: 50%; box-shadow: 0 0 0 15px rgba(229,192,123,.025), 0 0 0 33px rgba(229,192,123,.018); }
+    .balance-label { display: flex; align-items: center; justify-content: space-between; color: #cfbea0; font-size: .64rem; }
+    .balance-value { margin: 6px 0 9px; color: #f6f1e5; font-size: 1.65rem; font-weight: 780; letter-spacing: -.045em; }
+    .balance-foot { display: flex; align-items: center; gap: 5px; color: #9bd6ac; font-size: .58rem; }
+    .balance-foot span { padding: 2px 5px; border-radius: 5px; background: rgba(117,190,137,.13); }
+    .app-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 10px; }
+    .app-stat { padding: 11px 12px; border: 1px solid rgba(255,255,255,.075); border-radius: 12px; background: #191b22; }
+    .app-stat span { display: flex; align-items: center; gap: 5px; color: #8d9099; font-size: .58rem; }
+    .app-stat span::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+    .app-stat strong { display: block; margin-top: 5px; color: #eeedf0; font-size: .94rem; letter-spacing: -.02em; }
+    .app-chart { margin-top: 10px; padding: 13px 13px 8px; border: 1px solid rgba(255,255,255,.075); border-radius: 13px; background: #191b22; }
+    .chart-head { display: flex; justify-content: space-between; align-items: center; color: #c7c8cc; font-size: .65rem; font-weight: 700; }
+    .chart-head small { color: #868993; font-size: .55rem; font-weight: 500; }
+    .bars { height: 69px; display: flex; align-items: end; gap: 8px; margin-top: 10px; padding: 0 5px; border-bottom: 1px solid rgba(255,255,255,.07); background: repeating-linear-gradient(to bottom, transparent 0 21px, rgba(255,255,255,.035) 22px); }
+    .bars i { flex: 1; max-width: 19px; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, #ebcb76, #a87c1c); box-shadow: 0 0 13px rgba(212,175,55,.13); }
+    .bars i:nth-child(1) { height: 36%; opacity: .67; } .bars i:nth-child(2) { height: 54%; opacity: .76; } .bars i:nth-child(3) { height: 42%; opacity: .72; } .bars i:nth-child(4) { height: 76%; opacity: .88; } .bars i:nth-child(5) { height: 62%; opacity: .82; } .bars i:nth-child(6) { height: 92%; } .bars i:nth-child(7) { height: 70%; opacity: .84; }
+    .chart-days { display: flex; justify-content: space-between; padding: 5px 4px 0; color: #757882; font-size: .49rem; }
+    .app-transactions { margin-top: 12px; }
+    .transactions-head { display: flex; justify-content: space-between; margin-bottom: 7px; color: #c7c8cc; font-size: .64rem; font-weight: 700; }
+    .transactions-head span:last-child { color: var(--gold-light); font-size: .56rem; font-weight: 600; }
+    .transaction { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-top: 1px solid rgba(255,255,255,.055); }
+    .transaction-left { display: flex; align-items: center; gap: 8px; }
+    .transaction-icon { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 8px; background: rgba(212,175,55,.1); color: #e4c36e; font-size: .65rem; }
+    .transaction-left strong { display: block; color: #e5e4e5; font-size: .59rem; }
+    .transaction-left small { color: #838690; font-size: .49rem; }
+    .transaction > strong { color: #dcdde0; font-size: .61rem; }
+    .demo-label { position: absolute; z-index: 4; bottom: 0; left: 50%; transform: translateX(-50%); width: max-content; color: #868891; font-size: .68rem; }
+    .float-card { position: absolute; z-index: 3; display: flex; align-items: center; gap: 11px; padding: 12px 15px; border: 1px solid rgba(255,255,255,.12); border-radius: 15px; background: rgba(28,30,37,.86); box-shadow: 0 15px 42px rgba(0,0,0,.35); backdrop-filter: blur(16px); }
+    .float-card.one { top: 118px; right: 0; }
+    .float-card.two { left: 0; bottom: 89px; }
+    .float-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; color: var(--green); background: rgba(114,192,136,.13); }
+    .float-card.two .float-icon { color: var(--gold-light); background: rgba(212,175,55,.12); }
+    .float-icon svg { width: 17px; height: 17px; }
+    .float-card strong { display: block; font-size: .74rem; }
+    .float-card small { display: block; color: #8f929a; font-size: .61rem; }
 
-        /* Seção de Oferta / Preço */
-        .pricing {
-            padding: 80px 0;
-            background-color: var(--bg-secundario);
-            text-align: center;
-        }
-        .price-box {
-            background-color: var(--bg-card);
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 50px 40px;
-            border-radius: 12px;
-            border: 2px solid var(--dourado);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .price-box h3 {
-            font-size: 1.6rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-        }
-        .price-tag {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: var(--dourado);
-            margin: 20px 0;
-        }
-        .price-tag span {
-            font-size: 1.2rem;
-            color: var(--texto-claro);
-            font-weight: 400;
-        }
-        .price-features {
-            list-style: none;
-            margin: 30px 0;
-            text-align: left;
-            border-top: 1px solid #333;
-            border-bottom: 1px solid #333;
-            padding: 20px 0;
-        }
-        .price-features li {
-            margin-bottom: 15px;
-            padding-left: 30px;
-            position: relative;
-        }
-        .price-features li::before {
-            content: "★";
-            position: absolute;
-            left: 0;
-            color: var(--dourado);
-        }
+    /* Pain / solution */
+    .pain-section { padding-top: 88px; }
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .compare-card { padding: 27px; border-radius: var(--radius); border: 1px solid var(--line); background: linear-gradient(145deg, rgba(255,255,255,.035), rgba(255,255,255,.012)); }
+    .compare-card.good { border-color: rgba(212,175,55,.28); background: linear-gradient(145deg, rgba(212,175,55,.075), rgba(255,255,255,.016)); }
+    .compare-title { display: flex; align-items: center; gap: 11px; margin-bottom: 18px; }
+    .compare-symbol { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; font-weight: 900; }
+    .bad .compare-symbol { color: var(--red); background: rgba(229,142,136,.1); }
+    .good .compare-symbol { color: var(--green); background: rgba(155,214,172,.11); }
+    .compare-title h3 { margin: 0; font-size: 1.08rem; }
+    .compare-list { display: grid; gap: 13px; margin: 0; padding: 0; list-style: none; }
+    .compare-list li { display: flex; align-items: flex-start; gap: 11px; color: #b6b7bd; font-size: .94rem; }
+    .list-mark { margin-top: 1px; flex: 0 0 auto; color: var(--red); font-size: .93rem; }
+    .good .list-mark { color: var(--green); }
 
-        /* FAQ */
-        .faq {
-            padding: 80px 0;
-        }
-        .faq-item {
-            background-color: var(--bg-card);
-            margin-bottom: 15px;
-            padding: 25px;
-            border-radius: 5px;
-        }
-        .faq-item h3 {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: var(--dourado);
-        }
-        .faq-item p {
-            color: var(--texto-escuro);
-            font-size: 0.95rem;
-        }
+    /* Features */
+    .feature-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 15px; }
+    .feature-card { position: relative; overflow: hidden; grid-column: span 4; min-height: 222px; padding: 25px; border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(145deg, rgba(255,255,255,.045), rgba(255,255,255,.012)); transition: transform .22s ease, border-color .22s ease, background .22s ease; }
+    .feature-card:hover { transform: translateY(-4px); border-color: rgba(212,175,55,.35); background: linear-gradient(145deg, rgba(212,175,55,.07), rgba(255,255,255,.018)); }
+    .feature-card.feature-wide { grid-column: span 7; }
+    .feature-card.feature-mid { grid-column: span 5; }
+    .feature-card.feature-small { grid-column: span 4; }
+    .feature-card::after { content: ""; position: absolute; width: 170px; height: 170px; right: -90px; bottom: -110px; border: 1px solid rgba(212,175,55,.09); border-radius: 50%; box-shadow: 0 0 0 17px rgba(212,175,55,.02); }
+    .feature-icon { display: grid; place-items: center; width: 43px; height: 43px; margin-bottom: 21px; border: 1px solid rgba(212,175,55,.19); border-radius: 13px; background: rgba(212,175,55,.08); color: var(--gold-light); }
+    .feature-icon svg { width: 21px; height: 21px; }
+    .feature-card h3 { margin: 0 0 9px; font-size: 1.08rem; letter-spacing: -.02em; }
+    .feature-card p { max-width: 500px; margin: 0; color: var(--muted); font-size: .91rem; line-height: 1.62; }
+    .feature-tag { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; color: var(--gold-light); font-size: .72rem; font-weight: 700; }
+    .feature-tag::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
 
-        /* Footer */
-        footer {
-            background-color: #0b0b0b;
-            padding: 40px 0;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #666;
-            border-top: 1px solid #1a1a1a;
-        }
+    /* Trust section */
+    .trust-panel { position: relative; overflow: hidden; display: grid; grid-template-columns: .9fr 1.1fr; gap: 45px; align-items: center; padding: 42px; border: 1px solid rgba(212,175,55,.22); border-radius: 28px; background: radial-gradient(ellipse at 11% 13%, rgba(212,175,55,.1), transparent 35%), linear-gradient(140deg, #1b1d24, #15171d); box-shadow: var(--shadow); }
+    .trust-panel::before { content: ""; position: absolute; top: -130px; right: -70px; width: 280px; height: 280px; border: 1px solid rgba(212,175,55,.08); border-radius: 50%; box-shadow: 0 0 0 30px rgba(212,175,55,.018), 0 0 0 70px rgba(212,175,55,.012); }
+    .trust-copy, .trust-points { position: relative; z-index: 1; }
+    .trust-copy h2 { margin: 13px 0 13px; font-size: clamp(1.8rem, 3.4vw, 2.8rem); line-height: 1.08; letter-spacing: -.05em; }
+    .trust-copy p { max-width: 400px; color: var(--muted); margin: 0; }
+    .trust-points { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+    .trust-point { min-height: 120px; padding: 18px; border: 1px solid rgba(255,255,255,.075); border-radius: 16px; background: rgba(11,13,17,.36); }
+    .trust-point:first-child { grid-column: span 2; }
+    .trust-point .point-icon { color: var(--gold-light); margin-bottom: 9px; }
+    .trust-point .point-icon svg { width: 19px; height: 19px; }
+    .trust-point strong { display: block; font-size: .94rem; }
+    .trust-point p { margin: 5px 0 0; color: #92949c; font-size: .79rem; }
 
-        /* Responsividade */
-        @media (max-width: 768px) {
-            header {
-                padding: 80px 0 60px 0;
-            }
-            .hero-headline {
-                font-size: 2rem;
-            }
-            .hero-subheadline {
-                font-size: 1rem;
-            }
-            .section-title {
-                font-size: 1.8rem;
-            }
-            .price-box {
-                padding: 30px 20px;
-            }
-        }
-    </style>
+    /* Pricing */
+    .pricing-section { position: relative; overflow: hidden; }
+    .pricing-section::before { content: ""; position: absolute; left: 50%; top: 30%; width: 600px; height: 400px; transform: translateX(-50%); background: rgba(212,175,55,.075); filter: blur(130px); pointer-events: none; }
+    .pricing-inner { position: relative; }
+    .pricing-heading { max-width: 640px; margin: 0 auto 38px; text-align: center; }
+    .pricing-heading .eyebrow { justify-content: center; }
+    .pricing-heading h2 { margin: 14px 0 13px; font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.05; letter-spacing: -.05em; }
+    .pricing-heading p { margin: 0; color: var(--muted); }
+    .price-card { position: relative; width: min(100%, 620px); margin: 0 auto; padding: 30px; border: 1px solid rgba(212,175,55,.58); border-radius: 27px; background: linear-gradient(155deg, rgba(39,35,25,.95), rgba(24,25,30,.97) 42%, #181a20); box-shadow: 0 0 0 1px rgba(212,175,55,.06), 0 25px 85px rgba(0,0,0,.5), 0 0 60px rgba(212,175,55,.08); }
+    .price-ribbon { display: flex; align-items: center; justify-content: center; gap: 8px; width: fit-content; max-width: 100%; margin: -49px auto 23px; padding: 10px 17px; border: 1px solid rgba(247,223,160,.38); border-radius: 999px; color: #211a0a; background: linear-gradient(135deg, #f0d68f, #d4af37); box-shadow: 0 8px 25px rgba(212,175,55,.24); font-size: .75rem; font-weight: 900; letter-spacing: .06em; text-align: center; }
+    .price-ribbon svg { width: 16px; height: 16px; }
+    .price-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+    .price-top h3 { margin: 0; font-size: 1.23rem; }
+    .price-top p { margin: 5px 0 0; color: var(--muted); font-size: .87rem; }
+    .price-tag { padding: 7px 10px; border: 1px solid rgba(155,214,172,.19); border-radius: 999px; color: var(--green); background: rgba(155,214,172,.07); font-size: .68rem; font-weight: 750; white-space: nowrap; }
+    .price-amount { display: flex; align-items: baseline; gap: 7px; margin: 21px 0 5px; }
+    .price-amount strong { font-size: clamp(2.7rem, 7vw, 4rem); line-height: 1; letter-spacing: -.07em; }
+    .price-amount span { color: #a2a3a9; font-size: .95rem; }
+    .price-after { margin: 0; color: #a3a5ac; font-size: .85rem; }
+    .price-divider { height: 1px; margin: 23px 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent); }
+    .benefit-list { display: grid; grid-template-columns: 1fr 1fr; gap: 13px 18px; margin: 0; padding: 0; list-style: none; }
+    .benefit-list li { display: flex; align-items: flex-start; gap: 9px; color: #c5c6cb; font-size: .84rem; }
+    .benefit-check { flex: 0 0 auto; display: grid; place-items: center; width: 18px; height: 18px; margin-top: 1px; border-radius: 50%; background: rgba(155,214,172,.12); color: var(--green); font-size: .68rem; font-weight: 900; }
+    .price-cta { width: 100%; margin-top: 27px; }
+    .price-cta .icon { width: 20px; height: 20px; }
+    .price-footnote { margin: 13px 0 0; color: #92949b; text-align: center; font-size: .74rem; }
+    .payment-note { display: flex; justify-content: center; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 20px; color: #a1a3aa; font-size: .77rem; }
+    .payment-note strong { color: #d9d9db; font-weight: 650; }
+    .payment-pill { padding: 4px 8px; border: 1px solid rgba(255,255,255,.1); border-radius: 7px; background: rgba(255,255,255,.025); }
+
+    /* FAQ */
+    .faq-layout { display: grid; grid-template-columns: .72fr 1.28fr; gap: 70px; align-items: start; }
+    .faq-intro { position: sticky; top: 118px; }
+    .faq-intro h2 { margin: 13px 0; font-size: clamp(2rem, 4vw, 3.15rem); line-height: 1.05; letter-spacing: -.05em; }
+    .faq-intro p { color: var(--muted); }
+    .faq-contact { display: inline-flex; align-items: center; gap: 8px; margin-top: 13px; color: var(--gold-light); font-size: .88rem; font-weight: 750; }
+    .faq-contact svg { width: 18px; height: 18px; }
+    .faq-list { display: grid; gap: 10px; }
+    .faq-list details { border: 1px solid var(--line); border-radius: 15px; background: rgba(255,255,255,.025); transition: border-color .2s ease, background .2s ease; }
+    .faq-list details[open] { border-color: rgba(212,175,55,.28); background: rgba(212,175,55,.035); }
+    .faq-list summary { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 20px; color: #e8e7e4; font-size: .94rem; font-weight: 700; cursor: pointer; list-style: none; }
+    .faq-list summary::-webkit-details-marker { display: none; }
+    .faq-list summary::after { content: "+"; display: grid; place-items: center; width: 25px; height: 25px; flex: 0 0 auto; border: 1px solid rgba(212,175,55,.25); border-radius: 50%; color: var(--gold-light); font-size: 1.1rem; font-weight: 400; transition: transform .2s ease; }
+    .faq-list details[open] summary::after { content: "−"; }
+    .faq-answer { padding: 0 20px 19px; color: #a4a6ad; font-size: .88rem; line-height: 1.7; }
+    .faq-answer p { margin: 0; }
+
+    /* Closing CTA */
+    .closing-card { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 30px; padding: 34px 38px; border: 1px solid rgba(212,175,55,.24); border-radius: 24px; background: linear-gradient(115deg, rgba(212,175,55,.12), rgba(29,30,36,.8) 52%, rgba(255,255,255,.025)); }
+    .closing-card::after { content: ""; position: absolute; width: 220px; height: 220px; right: 25%; top: -150px; border: 1px solid rgba(212,175,55,.1); border-radius: 50%; box-shadow: 0 0 0 22px rgba(212,175,55,.02); }
+    .closing-copy { position: relative; z-index: 1; }
+    .closing-copy h2 { margin: 0 0 7px; font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: -.04em; }
+    .closing-copy p { margin: 0; color: var(--muted); }
+    .closing-card .btn { position: relative; z-index: 1; flex: 0 0 auto; }
+
+    /* Footer */
+    .site-footer { padding: 47px 0 25px; border-top: 1px solid rgba(255,255,255,.075); background: rgba(9,10,14,.33); }
+    .footer-main { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 45px; padding-bottom: 34px; }
+    .footer-brand p { max-width: 330px; margin: 15px 0 0; color: #8f929a; font-size: .84rem; }
+    .footer-col h3 { margin: 4px 0 13px; color: #dedee0; font-size: .82rem; letter-spacing: .02em; }
+    .footer-links { display: grid; gap: 9px; }
+    .footer-links a, .footer-links button { width: fit-content; padding: 0; border: 0; color: #989aa2; background: transparent; font-size: .82rem; cursor: pointer; text-align: left; transition: color .18s ease; }
+    .footer-links a:hover, .footer-links button:hover { color: var(--gold-light); }
+    .footer-links .legal-id { cursor: default; }
+    .footer-contact { display: inline-flex; align-items: center; gap: 8px; }
+    .footer-contact svg { width: 16px; height: 16px; color: #72c98a; }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding-top: 19px; border-top: 1px solid rgba(255,255,255,.07); color: #71747d; font-size: .73rem; }
+    .footer-bottom .legal-line { color: #868991; }
+    .footer-bottom .legal-line strong { color: #a8aab0; font-weight: 600; }
+
+    /* Floating WhatsApp */
+    .whatsapp-float { position: fixed; z-index: 45; right: 24px; bottom: 23px; display: grid; place-items: center; width: 58px; height: 58px; border: 1px solid rgba(255,255,255,.2); border-radius: 50%; color: #fff; background: #20b86a; box-shadow: 0 10px 28px rgba(0,0,0,.4), 0 0 0 5px rgba(32,184,106,.12); transition: transform .2s ease, box-shadow .2s ease; }
+    .whatsapp-float:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 13px 32px rgba(0,0,0,.45), 0 0 0 8px rgba(32,184,106,.13); }
+    .whatsapp-float svg { width: 29px; height: 29px; }
+    .whatsapp-float .wa-label { position: absolute; right: 69px; padding: 8px 11px; border: 1px solid rgba(255,255,255,.1); border-radius: 9px; color: #e7e7e8; background: #202229; font-size: .73rem; font-weight: 650; white-space: nowrap; opacity: 0; transform: translateX(5px); pointer-events: none; transition: opacity .18s ease, transform .18s ease; }
+    .whatsapp-float:hover .wa-label, .whatsapp-float:focus-visible .wa-label { opacity: 1; transform: translateX(0); }
+
+    /* Legal modal */
+    .modal-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 24px; background: rgba(4,5,8,.76); backdrop-filter: blur(7px); }
+    .modal-backdrop[hidden] { display: none !important; }
+    .legal-modal { position: relative; width: min(700px, 100%); max-height: min(80vh, 760px); overflow: auto; padding: 31px; border: 1px solid rgba(212,175,55,.3); border-radius: 22px; background: #181a21; box-shadow: 0 25px 90px rgba(0,0,0,.65); }
+    .modal-close { position: sticky; float: right; top: 0; z-index: 2; display: grid; place-items: center; width: 37px; height: 37px; margin: -9px -9px 0 10px; border: 1px solid rgba(255,255,255,.1); border-radius: 11px; background: #22242b; color: #ddd; font-size: 1.35rem; cursor: pointer; }
+    .legal-modal h2 { margin: 0 0 8px; font-size: 1.65rem; letter-spacing: -.04em; }
+    .legal-modal .modal-lede { margin: 0 0 22px; color: var(--muted); font-size: .89rem; }
+    .legal-modal h3 { margin: 19px 0 5px; color: #e4cb8e; font-size: .98rem; }
+    .legal-modal p, .legal-modal li { color: #b3b5bc; font-size: .86rem; line-height: 1.7; }
+    .legal-modal p { margin: 7px 0; }
+    .legal-modal ul { margin: 7px 0 0; padding-left: 20px; }
+    .legal-modal a { color: var(--gold-light); text-decoration: underline; text-underline-offset: 3px; }
+    .modal-footnote { margin-top: 23px !important; padding-top: 15px; border-top: 1px solid rgba(255,255,255,.08); color: #898c94 !important; font-size: .76rem !important; }
+    body.modal-open { overflow: hidden; }
+
+    @media (max-width: 980px) {
+      .nav-shell { gap: 18px; }
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: .8rem; }
+      .nav-cta { padding-inline: 13px !important; }
+      .hero-grid { gap: 25px; }
+      .hero h1 { font-size: clamp(2.8rem, 6vw, 4.2rem); }
+      .float-card.one { right: -10px; }
+      .float-card.two { left: -10px; }
+      .trust-panel { gap: 25px; padding: 34px; }
+      .faq-layout { gap: 40px; }
+    }
+    @media (max-width: 760px) {
+      .wrap { width: min(100% - 36px, 560px); }
+      .section { padding: 76px 0; }
+      .nav-shell { height: 68px; }
+      .brand-mark { width: 56px; height: 36px; }
+      .menu-toggle { display: grid; place-items: center; margin-left: auto; }
+      .nav-cta { display: none !important; }
+      .nav-links { position: absolute; top: 67px; left: 0; right: 0; display: none; align-items: stretch; gap: 0; padding: 10px 18px 16px; border-bottom: 1px solid rgba(255,255,255,.08); background: rgba(15,17,23,.97); box-shadow: 0 18px 30px rgba(0,0,0,.26); }
+      .nav-links.is-open { display: flex; flex-direction: column; }
+      .nav-links a { padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,.045); font-size: .94rem; }
+      .nav-links a:last-child { border: 0; }
+      .hero { min-height: auto; padding: 115px 0 58px; }
+      .hero::after { width: 400px; height: 400px; top: 480px; right: -200px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 16px; }
+      .hero-copy { max-width: 600px; }
+      .hero h1 { max-width: 590px; margin: 20px 0 16px; font-size: clamp(2.8rem, 10vw, 4rem); }
+      .hero-lede { font-size: 1rem; }
+      .hero-actions { margin-top: 24px; }
+      .hero-actions .btn-gold { width: 100%; }
+      .hero-actions .btn-outline { min-height: 48px; }
+      .hero-visual { min-height: 540px; margin-top: 7px; }
+      .phone { width: min(315px, 75%); transform: none; }
+      .phone-screen { min-height: 526px; }
+      .float-card.one { top: 63px; right: 0; }
+      .float-card.two { left: -2px; bottom: 50px; }
+      .demo-label { bottom: 5px; }
+      .pain-section { padding-top: 72px; }
+      .section-heading { margin-bottom: 28px; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .compare-card { padding: 23px; }
+      .feature-grid { grid-template-columns: 1fr 1fr; }
+      .feature-card, .feature-card.feature-wide, .feature-card.feature-mid, .feature-card.feature-small { grid-column: span 1; min-height: 236px; padding: 20px; }
+      .feature-card:first-child { grid-column: span 2; }
+      .feature-icon { margin-bottom: 16px; }
+      .trust-panel { grid-template-columns: 1fr; padding: 27px; gap: 24px; }
+      .trust-points { grid-template-columns: 1fr 1fr; }
+      .trust-point:first-child { grid-column: span 2; }
+      .price-card { padding: 25px 21px; }
+      .benefit-list { grid-template-columns: 1fr; gap: 12px; }
+      .faq-layout { grid-template-columns: 1fr; gap: 27px; }
+      .faq-intro { position: static; }
+      .closing-card { align-items: stretch; flex-direction: column; padding: 26px; }
+      .closing-card .btn { width: 100%; }
+      .footer-main { grid-template-columns: 1fr 1fr; gap: 29px 22px; }
+      .footer-brand { grid-column: span 2; }
+      .footer-bottom { align-items: flex-start; flex-direction: column; }
+    }
+    @media (max-width: 440px) {
+      .wrap { width: calc(100% - 30px); }
+      .hero { padding-top: 105px; }
+      .hero-badge { font-size: .67rem; padding: 8px 10px; }
+      .hero h1 { font-size: clamp(2.5rem, 12vw, 3.45rem); }
+      .hero-actions .btn { padding-inline: 16px; font-size: .85rem; }
+      .hero-note { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: .7rem; }
+      .hero-note .legal { grid-column: span 2; }
+      .hero-micro { font-size: .75rem; }
+      .hero-visual { min-height: 500px; }
+      .phone { width: min(295px, 80%); }
+      .phone-screen { min-height: 505px; padding-inline: 13px; }
+      .float-card { padding: 9px 11px; gap: 8px; }
+      .float-card.one { right: -3px; top: 45px; }
+      .float-card.two { left: -3px; bottom: 38px; }
+      .float-card strong { font-size: .67rem; }
+      .float-card small { font-size: .55rem; }
+      .float-icon { width: 28px; height: 28px; }
+      .compare-card { padding: 20px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .feature-card, .feature-card.feature-wide, .feature-card.feature-mid, .feature-card.feature-small, .feature-card:first-child { grid-column: auto; min-height: auto; }
+      .feature-card { padding: 22px; }
+      .feature-card p { font-size: .88rem; }
+      .trust-panel { padding: 23px 19px; }
+      .trust-points { grid-template-columns: 1fr; }
+      .trust-point:first-child { grid-column: auto; }
+      .trust-point { min-height: auto; }
+      .price-top { flex-direction: column; gap: 10px; }
+      .price-ribbon { font-size: .66rem; padding: 9px 12px; }
+      .payment-note { font-size: .73rem; }
+      .faq-list summary { padding: 16px; font-size: .87rem; }
+      .faq-answer { padding: 0 16px 17px; font-size: .83rem; }
+      .footer-main { grid-template-columns: 1fr; }
+      .footer-brand { grid-column: auto; }
+      .footer-col { padding-top: 2px; }
+      .whatsapp-float { width: 54px; height: 54px; right: 16px; bottom: 16px; }
+      .modal-backdrop { padding: 12px; }
+      .legal-modal { padding: 24px 20px; max-height: 88vh; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
 </head>
 <body>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+  <header class="site-header">
+    <div class="wrap nav-shell">
+      <a class="brand" href="#inicio" aria-label="The Barbers Money — início">
+        <span class="brand-mark"><img src="assets/the-barbers-money-mark.png" alt="" width="769" height="338"></span>
+        <span class="brand-words"><strong>The Barbers</strong><span>Money</span></span>
+      </a>
+      <nav class="nav-links" id="primaryNav" aria-label="Navegação principal">
+        <a href="#recursos">Recursos</a>
+        <a href="#vantagens">Vantagens</a>
+        <a href="#plano">Plano</a>
+        <a href="#suporte">Suporte</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a class="btn btn-gold nav-cta" href="https://the-barbersmoney.lovable.app/" target="_blank" rel="noopener noreferrer">Começar 30 Dias Grátis</a>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="primaryNav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </header>
 
-    <header>
-        <div class="container">
-            <div class="logo">THEBARBERS<span>MONEY</span></div>
-            <h1 class="hero-headline">Transforme a Gestão da Sua Barbearia e Multiplique os Seus Lucros</h1>
-            <p class="hero-subheadline">O método definitivo criado para barbeiros e donos de barbearia que querem parar de trocar tempo por dinheiro e construir um negócio altamente lucrativo e escalável.</p>
-            <a href="https://pay.kiwify.com.br/PT21S5y" class="btn" target="_blank">Quero Multiplicar Meu Lucro</a>
-            <span class="cta-subtext">Acesso imediato e seguro via Kiwify.</span>
+  <main id="conteudo">
+    <section class="hero" id="inicio">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <div class="hero-badge"><span class="star" aria-hidden="true">★</span> O sistema oficial dos barbeiros de alta performance</div>
+          <h1>Abandone o caderninho. <em>Domine seu caixa.</em></h1>
+          <p class="hero-lede">Tenha controle total da barbearia e descubra seu lucro líquido real todos os dias. Lançamentos em segundos, divisão automática de comissões e acesso individual com PIN — tudo no ritmo da sua barbearia.</p>
+          <div class="hero-actions">
+            <a class="btn btn-gold" href="https://the-barbersmoney.lovable.app/" target="_blank" rel="noopener noreferrer">
+              EXPERIMENTAR 30 DIAS GRÁTIS
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a class="btn btn-outline" href="#recursos">Conhecer o sistema</a>
+          </div>
+          <div class="hero-note" aria-label="Condições do teste">
+            <span><b class="check">✓</b> Sem cartão de crédito</span>
+            <span><b class="check">✓</b> Teste grátis por 30 dias</span>
+            <span class="legal">CNPJ 32.554.785/0001-30</span>
+          </div>
+          <div class="hero-micro">
+            <div class="avatar-stack" aria-hidden="true"><span>TB</span><span>M</span><span>✓</span></div>
+            <span>Gestão mais simples, com suporte humano pelo WhatsApp.</span>
+          </div>
         </div>
-    </header>
 
-    <section class="features">
-        <div class="container">
-            <h2 class="section-title">O que você vai dominar com o <span>Thebarbersmoney</span></h2>
-            <div class="grid-features">
-                <div class="card-feature">
-                    <h3>Controle Financeiro de Elite</h3>
-                    <p>Saiba exatamente para onde vai cada centavo do seu caixa. Monitore seus custos fixos, variáveis e a margem real de lucro por serviço.</p>
+        <div class="hero-visual" aria-label="Prévia ilustrativa do painel do The Barbers Money">
+          <div class="visual-glow" aria-hidden="true"></div>
+          <div class="float-card one" aria-hidden="true">
+            <span class="float-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11l4 4 8-9"/><path d="M15 6h6v6"/></svg></span>
+            <span><strong>Lucro mais claro</strong><small>Custos e comissões no controle</small></span>
+          </div>
+          <div class="phone" aria-hidden="true">
+            <div class="phone-screen">
+              <div class="phone-status"><span>9:41</span><span class="status-icons"><i></i><i></i><i></i><b class="battery"></b></span></div>
+              <div class="app-top">
+                <div class="app-brand">
+                  <span class="app-logo"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 23 23 6M10 27 27 10M6 23a3 3 0 1 0 4 4M23 6l3-3M19 10l4 4"/></svg></span>
+                  <span><strong>The Barbers Money</strong><small>PAINEL DA BARBEARIA</small></span>
                 </div>
-                <div class="card-feature">
-                    <h3>Atração de Clientes Fiéis</h3>
-                    <p>Estratégias validadas de marketing e captação para manter a sua agenda sempre cheia, sem depender apenas do fluxo da rua.</p>
-                </div>
-                <div class="card-feature">
-                    <h3>Escala e Faturamento</h3>
-                    <p>Aprenda a criar novas fontes de receita dentro do seu espaço, desde a venda de produtos até modelos de recorrência inteligentes.</p>
-                </div>
+                <span class="app-bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></span>
+              </div>
+              <div class="app-title"><h3>Visão geral</h3><span>Este mês⌄</span></div>
+              <div class="balance-card">
+                <div class="balance-label"><span>Lucro líquido estimado</span><span>◉</span></div>
+                <div class="balance-value">R$ 4.827,50</div>
+                <div class="balance-foot"><span>+ 12,8%</span> em relação ao mês anterior</div>
+              </div>
+              <div class="app-stats">
+                <div class="app-stat"><span>Faturamento</span><strong>R$ 8.450</strong></div>
+                <div class="app-stat"><span>Custos e comissões</span><strong>R$ 3.622</strong></div>
+              </div>
+              <div class="app-chart">
+                <div class="chart-head"><span>Movimento do mês</span><small>Últimos 7 dias⌄</small></div>
+                <div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="chart-days"><span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span><span>SÁB</span><span>DOM</span></div>
+              </div>
+              <div class="app-transactions">
+                <div class="transactions-head"><span>Atividade recente</span><span>Ver extrato</span></div>
+                <div class="transaction"><span class="transaction-left"><span class="transaction-icon">✂</span><span><strong>Corte + barba</strong><small>Lucas · 14:32</small></span></span><strong>+ R$ 65,00</strong></div>
+                <div class="transaction"><span class="transaction-left"><span class="transaction-icon">✦</span><span><strong>Pomada modeladora</strong><small>Produto · 13:55</small></span></span><strong>+ R$ 42,00</strong></div>
+              </div>
             </div>
+          </div>
+          <div class="float-card two" aria-hidden="true">
+            <span class="float-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+            <span><strong>Comissão calculada</strong><small>Sem conta de cabeça no fim do dia</small></span>
+          </div>
+          <span class="demo-label">Prévia ilustrativa · dados demonstrativos</span>
         </div>
+      </div>
     </section>
 
-    <section class="about-product">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>Por que o Thebarbersmoney é para você?</h2>
-                    <p>Muitos barbeiros são excelentes com a tesoura e a máquina, mas acabam fechando as portas ou vivendo no sufoco porque não sabem gerenciar as finanças e o marketing do próprio negócio.</p>
-                    <p>O <strong>Thebarbersmoney</strong> foi desenhado para cortar as teorias chatas e te entregar um plano prático de aplicação imediata.</p>
-                    <ul class="about-list">
-                        <li>Metodologia 100% prática focada no mercado de barbearias</li>
-                        <li>Planilhas e ferramentas prontas para usar no seu dia a dia</li>
-                        <li>Acesso direto pelo celular, tablet ou computador</li>
-                        <li>Atualizações estratégicas constantes</li>
-                    </ul>
-                </div>
-            </div>
+    <section class="section pain-section" id="vantagens">
+      <div class="wrap">
+        <div class="section-heading">
+          <span class="eyebrow">Você se identifica?</span>
+          <h2>Menos confusão no caixa.<br><span class="gold-text">Mais clareza na gestão.</span></h2>
+          <p>Quando tudo fica espalhado, a rotina pesa. Organize os números sem transformar o fechamento em mais um trabalho.</p>
         </div>
+        <div class="compare-grid">
+          <article class="compare-card bad">
+            <div class="compare-title"><span class="compare-symbol" aria-hidden="true">×</span><h3>Sem o sistema</h3></div>
+            <ul class="compare-list">
+              <li><span class="list-mark" aria-hidden="true">✕</span><span>Erros e dúvidas na hora de repassar comissões.</span></li>
+              <li><span class="list-mark" aria-hidden="true">✕</span><span>Anotações em papel que somem ou ficam difíceis de conferir.</span></li>
+              <li><span class="list-mark" aria-hidden="true">✕</span><span>Chega o fim do mês e ainda não está claro se sobrou lucro.</span></li>
+            </ul>
+          </article>
+          <article class="compare-card good">
+            <div class="compare-title"><span class="compare-symbol" aria-hidden="true">✓</span><h3>Com o The Barbers Money</h3></div>
+            <ul class="compare-list">
+              <li><span class="list-mark" aria-hidden="true">✓</span><span>Lance atendimentos e vendas com poucos toques.</span></li>
+              <li><span class="list-mark" aria-hidden="true">✓</span><span>Comissão de cada barbeiro calculada no próprio lançamento.</span></li>
+              <li><span class="list-mark" aria-hidden="true">✓</span><span>Visualize o resultado depois de considerar custos e comissões.</span></li>
+            </ul>
+          </article>
+        </div>
+      </div>
     </section>
 
-    <section class="pricing">
-        <div class="container">
-            <h2 class="section-title">Assine Agora e Comece a Mudar o Seu Jogo</h2>
-            <div class="price-box">
-                <h3>Acesso Mensal Completo</h3>
-                <p style="color: var(--texto-escuro);">Tenha todas as ferramentas e estratégias na palma da sua mão.</p>
-                <div class="price-tag">R$ 39,90<span> / por mês</span></div>
-                <ul class="price-features">
-                    <li>Acesso irrestrito à plataforma Thebarbersmoney</li>
-                    <li>Estratégias de escala e marketing digital aplicadas</li>
-                    <li>Ferramentas de análise de caixa e lucratividade</li>
-                    <li>Suporte dedicado ao assinante</li>
-                    <li>Cancele quando quiser, sem amarras</li>
-                </ul>
-                <a href="https://pay.kiwify.com.br/PT21S5y" class="btn" style="width: 100%; display: block;" target="_blank">Garantir Meu Acesso</a>
-                <span class="cta-subtext">Menos de R$ 1,40 por dia para transformar seu negócio.</span>
-            </div>
+    <section class="section" id="recursos">
+      <div class="wrap">
+        <div class="section-heading">
+          <span class="eyebrow">Feito para o dia a dia</span>
+          <h2>Seu caixa organizado, <span class="gold-text">sem complicar a rotina.</span></h2>
+          <p>Os controles que fazem diferença na barbearia, em um sistema direto e fácil de usar no celular.</p>
         </div>
+        <div class="feature-grid">
+          <article class="feature-card feature-wide">
+            <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/><path d="M12 3v1M3 12h1"/></svg></span>
+            <h3>Lançamento ultra-rápido</h3>
+            <p>Registre atendimentos e vendas de produtos em poucos segundos. Um fluxo objetivo para lançar sem atrapalhar o atendimento e a recepção.</p>
+            <span class="feature-tag">Atendimento, produto e valor em poucos toques</span>
+          </article>
+          <article class="feature-card feature-mid">
+            <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h1m3 0h1m3 0h1M8 16h1m3 0h1"/><path d="M9 3v2m6-2v2"/></svg></span>
+            <h3>Acesso individual por PIN</h3>
+            <p>Cada barbeiro consulta apenas os próprios atendimentos e comissões. O painel financeiro geral fica reservado ao responsável pela barbearia.</p>
+            <span class="feature-tag">Mais privacidade para cada perfil</span>
+          </article>
+          <article class="feature-card feature-mid">
+            <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 6-7"/><path d="M16 6h4v4"/></svg></span>
+            <h3>Custos e lucro real</h3>
+            <p>Registre despesas fixas, como aluguel e internet, e variáveis, como produtos e lâminas. Veja o resultado líquido com mais clareza.</p>
+            <span class="feature-tag">Receitas, despesas e comissões no mesmo lugar</span>
+          </article>
+          <article class="feature-card feature-small">
+            <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M8 2v4m8-4v4M4 9h16M8 13h3m-3 4h6"/></svg></span>
+            <h3>Extrato mensal</h3>
+            <p>Consulte os meses anteriores e confira lançamentos e resultados de forma organizada.</p>
+          </article>
+          <article class="feature-card feature-small">
+            <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M9 18h6M8 5h8"/></svg></span>
+            <h3>Instale como app (PWA)</h3>
+            <p>Adicione à tela inicial do iPhone ou Android. Acesse pelo ícone, sem ocupar espaço como um app tradicional.</p>
+          </article>
+          <article class="feature-card feature-small">
+            <span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/></svg></span>
+            <h3>Suporte humano</h3>
+            <p>Fale diretamente com a equipe TTBN pelo WhatsApp para tirar dúvidas sobre o sistema.</p>
+            <a class="feature-tag" href="https://wa.me/5511969805086?text=Ol%C3%A1%2C%20preciso%20de%20ajuda%20com%20o%20The%20Barbers%20Money." target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
+          </article>
+        </div>
+      </div>
     </section>
 
-    <section class="faq">
-        <div class="container">
-            <h2 class="section-title">Perguntas Frequentes</h2>
-            <div class="faq-item">
-                <h3>Como funciona a assinatura do Thebarbersmoney?</h3>
-                <p>O funcionamento é igual ao da Netflix: você paga o valor mensal fixo de R$ 39,90 e tem acesso contínuo a todo o conteúdo e ferramentas enquanto sua assinatura estiver ativa. Pode cancelar quando quiser diretamente pela plataforma.</p>
-            </div>
-            <div class="faq-item">
-                <h3>Eu preciso ter uma barbearia grande para aplicar?</h3>
-                <p>Não! O método serve tanto para quem atende sozinho em casa ou a domicílio, quanto para quem já gerencia uma equipe grande e quer organizar o caixa e o marketing de forma profissional.</p>
-            </div>
-            <div class="faq-item">
-                <h3>Como recebo o acesso?</h3>
-                <p>Imediatamente após a confirmação do pagamento pela Kiwify, você receberá um e-mail com os seus dados de login e instruções detalhadas para acessar a plataforma.</p>
-            </div>
+    <section class="section" aria-labelledby="confianca-title">
+      <div class="wrap">
+        <div class="trust-panel">
+          <div class="trust-copy">
+            <span class="eyebrow">Gestão com confiança</span>
+            <h2 id="confianca-title">Números claros.<br><span class="gold-text">Decisões melhores.</span></h2>
+            <p>Tenha a rotina financeira em um só lugar, preserve a visão do dono e conte com apoio quando precisar.</p>
+          </div>
+          <div class="trust-points">
+            <article class="trust-point">
+              <span class="point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+              <strong>Visão do dono protegida</strong>
+              <p>Perfis de colaborador limitados aos próprios atendimentos e comissões.</p>
+            </article>
+            <article class="trust-point">
+              <span class="point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></span>
+              <strong>Mais tempo na operação</strong>
+              <p>Registros simples para acompanhar o movimento sem planilhas complicadas.</p>
+            </article>
+            <article class="trust-point">
+              <span class="point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/></svg></span>
+              <strong>Suporte pelo WhatsApp</strong>
+              <p>Contato direto com a TTBN para dúvidas e orientações.</p>
+            </article>
+          </div>
         </div>
+      </div>
     </section>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 Thebarbersmoney. Todos os direitos reservados.</p>
-            <p style="margin-top: 5px; font-size: 0.75rem;">Este site não faz parte do Google Inc. ou do Meta Platforms, Inc. Além disso, não é endossado por essas empresas.</p>
+    <section class="section pricing-section" id="plano">
+      <div class="wrap pricing-inner">
+        <div class="pricing-heading">
+          <span class="eyebrow">Plano simples, sem surpresa</span>
+          <h2>Teste primeiro.<br><span class="gold-text">Decida com confiança.</span></h2>
+          <p>Comece sem informar cartão. Se fizer sentido para sua barbearia, continue por um valor mensal direto.</p>
         </div>
-    </footer>
+        <article class="price-card">
+          <div class="price-ribbon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/></svg> PRIMEIROS 30 DIAS 100% GRÁTIS</div>
+          <div class="price-top">
+            <div><h3>The Barbers Money</h3><p>Gestão financeira para a rotina da barbearia.</p></div>
+            <span class="price-tag">Sem fidelidade</span>
+          </div>
+          <div class="price-amount"><strong>R$ 39,90</strong><span>/ mês</span></div>
+          <p class="price-after">Somente após o período de teste grátis de 30 dias.</p>
+          <div class="price-divider"></div>
+          <ul class="benefit-list">
+            <li><span class="benefit-check">✓</span><span>Lançamentos e atendimentos ilimitados</span></li>
+            <li><span class="benefit-check">✓</span><span>Cadastro de colaboradores conforme sua equipe</span></li>
+            <li><span class="benefit-check">✓</span><span>PIN individual de segurança para barbeiros</span></li>
+            <li><span class="benefit-check">✓</span><span>Painel de custos e lucro líquido</span></li>
+            <li><span class="benefit-check">✓</span><span>Suporte via WhatsApp: (11) 96980-5086</span></li>
+            <li><span class="benefit-check">✓</span><span>Sem fidelidade e sem multa de cancelamento</span></li>
+          </ul>
+          <a class="btn btn-gold price-cta" href="https://the-barbersmoney.lovable.app/" target="_blank" rel="noopener noreferrer">
+            QUERO MEUS 30 DIAS GRÁTIS
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <p class="price-footnote">Sem cartão de crédito prévio. Sem compromisso para começar.</p>
+          <div class="payment-note"><strong>Após o teste:</strong><span class="payment-pill">PIX com comprovante</span><span>ou</span><span class="payment-pill">cartão via Kiwify</span></div>
+        </article>
+      </div>
+    </section>
 
-</body>
+    <section class="section" id="faq">
+      <div class="wrap faq-layout">
+        <div class="faq-intro">
+          <span class="eyebrow">FAQ</span>
+          <h2>Dúvidas? A gente <span class="gold-text">explica.</span></h2>
+          <p>Informações diretas para você começar com tranquilidade.</p>
+          <a class="faq-contact" href="https://wa.me/5511969805086?text=Ol%C3%A1%2C%20tenho%20uma%20d%C3%BAvida%20sobre%20o%20The%20Barbers%20Money." target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/></svg>
+            Falar com o suporte
+          </a>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>Preciso colocar meu cartão de crédito agora para testar?</summary>
+            <div class="faq-answer"><p>Não. O teste de 30 dias é gratuito e você não precisa informar cartão de crédito para começar. Fale com o suporte para ativar seu acesso.</p></div>
+          </details>
+          <details>
+            <summary>Meus barbeiros vão ter acesso ao faturamento total da barbearia?</summary>
+            <div class="faq-answer"><p>Não. O perfil de colaborador é restrito aos atendimentos e às comissões daquele barbeiro. A visão financeira geral fica reservada ao responsável pela barbearia.</p></div>
+          </details>
+          <details>
+            <summary>Como funciona o pagamento após os 30 dias de teste?</summary>
+            <div class="faq-answer"><p>O plano custa R$ 39,90 por mês após o período grátis. O pagamento pode ser feito via PIX, com envio do comprovante, ou por cartão pela Kiwify, conforme a opção disponibilizada no fluxo de contratação.</p></div>
+          </details>
+          <details>
+            <summary>Preciso instalar pela App Store ou Google Play?</summary>
+            <div class="faq-answer"><p>Não. O The Barbers Money funciona como um aplicativo web progressivo (PWA). Você pode adicionar o ícone à tela inicial do celular e acessar como um app, sem instalar pela loja.</p></div>
+          </details>
+          <details>
+            <summary>Como entro em contato para tirar dúvidas?</summary>
+            <div class="faq-answer"><p>O suporte oficial atende pelo WhatsApp <a href="https://wa.me/5511969805086" target="_blank" rel="noopener noreferrer">(11) 96980-5086</a>.</p></div>
+          </details>
+          <details>
+            <summary>Posso cancelar quando quiser?</summary>
+            <div class="faq-answer"><p>Sim. O plano não tem fidelidade nem multa de cancelamento. Para solicitar o cancelamento ou tirar dúvidas sobre a renovação, fale com o suporte oficial.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="suporte" style="padding-top: 0;">
+      <div class="wrap">
+        <div class="closing-card">
+          <div class="closing-copy">
+            <h2>Seu próximo fechamento pode ser mais simples.</h2>
+            <p>Comece seu teste grátis de 30 dias — sem cartão de crédito.</p>
+          </div>
+          <a class="btn btn-gold" href="https://the-barbersmoney.lovable.app/" target="_blank" rel="noopener noreferrer">
+            COMEÇAR AGORA
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <a class="brand" href="#inicio" aria-label="The Barbers Money — voltar ao início">
+            <span class="brand-mark"><img src="assets/the-barbers-money-mark.png" alt="" width="769" height="338"></span>
+            <span class="brand-words"><strong>The Barbers</strong><span>Money</span></span>
+          </a>
+          <p>Gestão financeira simples e direta para acompanhar o caixa da sua barbearia.</p>
+        </div>
+        <div class="footer-col">
+          <h3>Informações</h3>
+          <div class="footer-links">
+            <button type="button" data-open-legal="terms">Termos de Uso</button>
+            <button type="button" data-open-legal="privacy">Política de Privacidade</button>
+            <a href="#plano">Plano e valores</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Contato e identificação</h3>
+          <div class="footer-links">
+            <span class="legal-id">TTBN Barbershop · CNPJ 32.554.785/0001-30</span>
+            <a class="footer-contact" href="https://wa.me/5511969805086" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.07 0C5.5 0 .15 5.35.15 11.92c0 2.1.55 4.16 1.6 5.98L.05 24l6.25-1.64a11.9 11.9 0 0 0 5.76 1.47h.01c6.57 0 11.92-5.35 11.92-11.92a11.84 11.84 0 0 0-3.47-8.43ZM12.07 21.8h-.01a9.88 9.88 0 0 1-5.03-1.38l-.36-.21-3.71.97.99-3.62-.24-.37a9.87 9.87 0 0 1-1.52-5.27c0-5.45 4.44-9.89 9.9-9.89a9.83 9.83 0 0 1 7 2.9 9.83 9.83 0 0 1 2.89 7c0 5.46-4.44 9.9-9.9 9.9Zm5.43-7.41c-.3-.15-1.76-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.67-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.38-.03-.53-.08-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.08-.79.38-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.42.25-.7.25-1.3.18-1.42-.08-.13-.28-.2-.58-.35Z"/></svg>
+              WhatsApp (11) 96980-5086
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 The Barbers Money. Todos os direitos reservados.</span>
+        <span class="legal-line"><strong>CNPJ 32.554.785/0001-30</strong></span>
+      </div>
+    </div>
+  </footer>
+
+  <a class="whatsapp-float" href="https://wa.me/5511969805086?text=Ol%C3%A1%2C%20quero%20saber%20mais%20sobre%20o%20The%20Barbers%20Money." target="_blank" rel="noopener noreferrer" aria-label="Falar com o The Barbers Money pelo WhatsApp">
+    <span class="wa-label" aria-hidden="true">Fale com o suporte</span>
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.07 0C5.5 0 .15 5.35.15 11.92c0 2.1.55 4.16 1.6 5.98L.05 24l6.25-1.64a11.9 11.9 0 0 0 5.76 1.47h.01c6.57 0 11.92-5.35 11.92-11.92a11.84 11.84 0 0 0-3.47-8.43ZM12.07 21.8h-.01a9.88 9.88 0 0 1-5.03-1.38l-.36-.21-3.71.97.99-3.62-.24-.37a9.87 9.87 0 0 1-1.52-5.27c0-5.45 4.44-9.89 9.9-9.89a9.83 9.83 0 0 1 7 2.9 9.83 9.83 0 0 1 2.89 7c0 5.46-4.44 9.9-9.9 9.9Zm5.43-7.41c-.3-.15-1.76-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.67-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.38-.03-.53-.08-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.08-.79.38-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.42.25-.7.25-1.3.18-1.42-.08-.13-.28-.2-.58-.35Z"/></svg>
+  </a>
+
+  <div class="modal-backdrop" id="legalModal" hidden>
+    <section class="legal-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+      <button class="modal-close" type="button" aria-label="Fechar janela">×</button>
+      <div id="modalContent"></div>
+    </section>
+  </div>
+
+  <template id="privacyTemplate">
+    <h2 id="modalTitle">Política de Privacidade</h2>
+    <p class="modal-lede">Privacidade e transparência no uso do The Barbers Money.</p>
+    <p>A TTBN Barbershop, CNPJ 32.554.785/0001-30, trata os dados necessários para disponibilizar e manter o serviço de gestão financeira para barbearias.</p>
+    <h3>Quais dados podem ser tratados</h3>
+    <p>Dados limitados ao funcionamento do serviço, como nome, e-mail de acesso, informações de serviços, atendimentos e respectivos valores inseridos na plataforma.</p>
+    <h3>Como os dados são utilizados</h3>
+    <p>As informações são usadas para autenticação, registro dos lançamentos, cálculo de comissões e custos, exibição de relatórios e suporte ao usuário.</p>
+    <h3>Compartilhamento e segurança</h3>
+    <p>Dados pessoais não são comercializados com terceiros. As informações são armazenadas em banco de dados seguro e criptografado, conforme informado pela TTBN. O acesso é limitado ao necessário para a operação do serviço.</p>
+    <h3>Seus direitos e exclusão</h3>
+    <p>Você pode solicitar acesso, correção ou exclusão da conta e dos dados pessoais a qualquer momento, entrando em contato com o suporte oficial pelo WhatsApp <a href="https://wa.me/5511969805086" target="_blank" rel="noopener noreferrer">(11) 96980-5086</a>.</p>
+    <h3>Contato</h3>
+    <p>TTBN Barbershop · CNPJ 32.554.785/0001-30 · WhatsApp (11) 96980-5086.</p>
+    <p class="modal-footnote">Este texto resume as práticas de privacidade informadas para o serviço. Para exercer seus direitos, fale com o suporte oficial.</p>
+  </template>
+  <template id="termsTemplate">
+    <h2 id="modalTitle">Termos de Uso</h2>
+    <p class="modal-lede">Condições resumidas para utilizar o The Barbers Money.</p>
+    <h3>Teste e assinatura</h3>
+    <p>O teste inicial é gratuito por 30 dias e não exige cartão de crédito prévio. Após o período de teste, a continuidade do plano custa R$ 39,90 por mês.</p>
+    <h3>Pagamento</h3>
+    <p>O pagamento após o teste pode ser realizado via PIX, com envio do comprovante, ou por cartão pela Kiwify, conforme a opção disponível no fluxo de contratação.</p>
+    <h3>Uso de contas e acessos</h3>
+    <p>O responsável pela barbearia deve manter seus dados de acesso em segurança. Os PINs de colaboradores são individuais e os perfis de colaborador têm acesso restrito aos próprios atendimentos e comissões.</p>
+    <h3>Cancelamento</h3>
+    <p>O plano não tem fidelidade nem multa de cancelamento. Para solicitar cancelamento ou esclarecer condições da renovação, entre em contato com o suporte oficial.</p>
+    <h3>Suporte</h3>
+    <p>O canal oficial de atendimento é o WhatsApp <a href="https://wa.me/5511969805086" target="_blank" rel="noopener noreferrer">(11) 96980-5086</a>.</p>
+    <p class="modal-footnote">Estas informações são um resumo das condições comerciais informadas pela TTBN Barbershop, CNPJ 32.554.785/0001-30.</p>
+  </template>
+
+  <script>
+    (() => {
+      const menuToggle = document.getElementById('menuToggle');
+      const nav = document.getElementById('primaryNav');
+      if (menuToggle && nav) {
+        menuToggle.addEventListener('click', () => {
+          const isOpen = nav.classList.toggle('is-open');
+          menuToggle.setAttribute('aria-expanded', String(isOpen));
+          menuToggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+        });
+        nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+          nav.classList.remove('is-open');
+          menuToggle.setAttribute('aria-expanded', 'false');
+          menuToggle.setAttribute('aria-label', 'Abrir menu');
+        }));
+        document.addEventListener('click', event => {
+          if (!nav.contains(event.target) && !menuToggle.contains(event.target)) {
+            nav.classList.remove('is-open');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            menuToggle.setAttribute('aria-label', 'Abrir menu');
+          }
+        });
+      }
+
+      const backdrop = document.getElementById('legalModal');
+      const modal = backdrop?.querySelector('.legal-modal');
+      const modalContent = document.getElementById('modalContent');
+      const closeButton = backdrop?.querySelector('.modal-close');
+      let lastFocused = null;
+      const closeModal = () => {
+        if (!backdrop || backdrop.hidden) return;
+        backdrop.hidden = true;
+        document.body.classList.remove('modal-open');
+        if (lastFocused) lastFocused.focus();
+      };
+      document.querySelectorAll('[data-open-legal]').forEach(button => {
+        button.addEventListener('click', () => {
+          const template = document.getElementById(button.dataset.openLegal + 'Template');
+          if (!template || !modalContent || !backdrop) return;
+          lastFocused = button;
+          modalContent.replaceChildren(template.content.cloneNode(true));
+          backdrop.hidden = false;
+          document.body.classList.add('modal-open');
+          closeButton?.focus();
+        });
+      });
+      closeButton?.addEventListener('click', closeModal);
+      backdrop?.addEventListener('click', event => { if (event.target === backdrop) closeModal(); });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeModal();
+        if (event.key === 'Tab' && backdrop && !backdrop.hidden && modal) {
+          const focusable = [...modal.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter(el => el.offsetParent !== null);
+          if (!focusable.length) return;
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+          else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        }
+      });
+    })();
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4a970449c460320',t:'MTc5MjAxMDgzOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
